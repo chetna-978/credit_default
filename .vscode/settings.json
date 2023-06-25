@@ -1,0 +1,21 @@
+{ "terminal.integrated.env.windows": { "PYTHONPATH": "${workspaceFolder}" },
+  "workbench.colorTheme": "Default Dark+",
+  "workbench.preferredDarkColorTheme": "Default Dark+",
+  "task.allowAutomaticTasks": "on",
+  "workbench.editorAssociations": {
+    "*.md": "vscode.markdown.preview.editor"
+  },
+  "terminal.integrated.cwd": "${fileDirname}",
+  "terminal.integrated.splitCwd": "workspaceRoot",
+  "terminal.integrated.tabs.title": "${cwd}",
+  "python.terminal.executeInFileDir": true,
+  "python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    ".",
+    "-p",
+    "test_*.py"
+  ],
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestEnabled": true
+}
