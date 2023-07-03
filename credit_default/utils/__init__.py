@@ -61,7 +61,7 @@ def save_object(file_path: str, obj: object) -> None:
 def load_object(file_path: str, ) -> object:
     try:
         if not os.path.exists(file_path):
-            raise Exception(f"The file: {file_path} is not exists")
+            raise Exception(f"The file: {file_path} does not exists")
         with open(file_path, "rb") as file_obj:
             return dill.load(file_obj)
     except Exception as e:
@@ -81,7 +81,7 @@ def save_numpy_array_data(file_path: str, array: np.array):
     except Exception as e:
         raise CustomException(e, sys) from e
 
-def load_numpy_array_data(file_path: str) -> np.array:
+def load_numpy_array_data(file_path: str,allow_pickle=True) -> np.array:
     """
     load numpy array data from file
     file_path: str location of file to load
@@ -135,44 +135,12 @@ def evaluate_models(X_train, X_test, y_train, y_test, models, param):
         test_model_score = evaluate_clf(y_test, y_test_pred)
         report[model_name] = test_model_score
 
-    return report
+    return report 
 
 
-'''def evaluate_models(X_train, X_test, y_train, y_test, models,param):
-  
-   
-    models_list = []
-    report={}
-    
-    for i in range(len(list(models))):
-        model = list(models.values())[i]
-        param=param[list(models.keys())[i]]
-        
-        rf = GridSearchCV(estimator=model,
-                          param_grid=param,
-                          cv=3
-                         )
-        rf.fit(X_train, y_train)
-        
-        model.set_params(**rf.best_params_)
-        model.fit(X_train, y_train)
-       
-    
-
-        # Make predictions
-        y_train_pred = model.predict(X_train)
-        y_test_pred = model.predict(X_test)
-
-        # Training set performance
-        model_train_accuracy, model_train_f1,model_train_precision,\
-        model_train_recall,model_train_rocauc_score=evaluate_clf(y_train ,y_train_pred)
-        train_model_score=evaluate_clf(y_train ,y_train_pred)
 
 
-        # Test set performance
-        model_test_accuracy,model_test_f1,model_test_precision,\
-        model_test_recall,model_test_rocauc_score=evaluate_clf(y_test, y_test_pred)
-        test_model_score=evaluate_clf(y_test, y_test_pred)
-        report[(list(models.keys())[i])]=test_model_score
-        
-    return report'''
+
+
+
+

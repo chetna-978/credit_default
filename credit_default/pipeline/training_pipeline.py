@@ -59,3 +59,4 @@ def start_training_pipeline():
         model_pusher_artifact = model_pusher.initiate_model_pusher()
     except Exception as e:
         raise CustomException(e, sys)
+        

@@ -1,17 +1,12 @@
-import os
-import sys
-from datetime import datetime
 from flask import Flask, render_template, request, jsonify
-from flask_cors import CORS, cross_origin
 import pandas as pd
 from credit_default.logger import logging
 from credit_default.exception import CustomException
 from credit_default.utils import load_object
 from credit_default.predictor import ModelResolver
-from credit_default.components.data_transformation import DataTransformation
+
 
 app = Flask(__name__)
-CORS(app)
 
 PREDICTION_DIR = "prediction"
 
@@ -58,11 +53,10 @@ def home():
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
-@cross_origin()
 def predict():
-     if request.method == 'GET':
+    if request.method == 'GET':
         return render_template('index.html')
-     elif request.method == 'POST':
+    elif request.method == 'POST':
         try:
             file = request.files['file']
             file_path = f"uploads/{file.filename}"
@@ -72,26 +66,25 @@ def predict():
 
             prediction = start_batch_prediction(data)
 
-            return render_template('index.html', results=round(prediction, 2))
+            return render_template('index.html', prediction=round(prediction, 2))
         except Exception as e:
             return jsonify({'error': str(e)})
 
-@app.route('/predictAPI',methods=['POST'])
-@cross_origin()
+@app.route('/predictAPI', methods=['POST'])
 def predict_api():
-    if request.method=='POST':
-     try:
-        file = request.files['file']
-        file_path = f"uploads/{file.filename}"
-        file.save(file_path)
+    if request.method == 'POST':
+        try:
+            file = request.files['file']
+            file_path = f"uploads/{file.filename}"
+            file.save(file_path)
 
-        data = pd.read_csv(file_path)
+            data = pd.read_csv(file_path)
 
-        prediction = start_batch_prediction(data)
+            prediction = start_batch_prediction(data)
 
-        return jsonify({'price': round(prediction, 2)})
-     except Exception as e:
-             return jsonify({'error': str(e)})
+            return jsonify({'prediction': round(prediction, 2)})
+        except Exception as e:
+            return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

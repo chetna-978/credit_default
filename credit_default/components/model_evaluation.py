@@ -52,14 +52,13 @@ class ModelEvaluation:
             current_model = load_object(file_path=self.model_trainer_artifact.model_path)
 
             logging.info("Transforming the test data using the current transformer")
-            
         
-            # Transforming the test data using the current transformer
+               # Transforming the test data using the current transformer
             transformed_test_arr = current_transformer.named_steps['RobustScaler'].transform(test_arr[:, :-1])
 
-             # Ensure the number of features in the test data matches the expected number
+               # Ensure the number of features in the test data matches the expected number
             if transformed_test_arr.shape[1] != current_transformer.named_steps['RobustScaler'].n_features_in_:
-              raise ValueError("Number of features in the test data is not compatible with the transformer")
+             raise ValueError("Number of features in the test data is not compatible with the transformer")
 
             # Add the target column back to the transformed test data
             transformed_test_arr_with_target = np.hstack((transformed_test_arr, test_arr[:, -1].reshape(-1, 1)))
@@ -70,14 +69,12 @@ class ModelEvaluation:
             current_model_score = f1_score(y_true=test_arr[:, -1], y_pred=y_pred)
             logging.info(f"Accuracy using the current trained model: {current_model_score}")
 
-
-
             if latest_dir_path:
                 logging.info("Calculating accuracy using the previous trained model")
                 print(f"Number of features in test data: {test_arr.shape[1]}")
                 print(f"Number of features in transformed test data: {transformed_test_arr.shape[1]}")
                 
-                input_arr = transformer.transform(test_arr)  # Transform the test data using the previous transformer
+                input_arr = transformer.transform(test_arr[:, :-1])  # Exclude the target column during transformation
                 y_pred = model.predict(input_arr)
                 print(f"Prediction using previous model: {y_pred[:5]}")
                 previous_model_score = f1_score(y_true=test_arr[:, -1], y_pred=y_pred)
@@ -96,3 +93,4 @@ class ModelEvaluation:
 
         except Exception as e:
             raise CustomException(e, sys)
+

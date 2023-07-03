@@ -32,7 +32,7 @@ class DataTransformation:
             return pipeline
         except Exception as e:
             raise CustomException(e, sys)
-
+   
     def data_modified(self, df: pd.DataFrame):
         try:
             df['grad_school'] = (df['EDUCATION'] == 1).astype(int)
@@ -65,8 +65,8 @@ class DataTransformation:
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
 
             # modifying data
-            train_df = self.data_modified(df=train_df)
-            test_df = self.data_modified(df=test_df)
+            train_df = data_modified(self,df=train_df)
+            test_df = data_modified(self,df=test_df)
 
             # selecting input feature for train and test dataframe
             input_feature_train_df = train_df.drop(TARGET_COLUMN, axis=1)

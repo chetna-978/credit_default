@@ -4,10 +4,7 @@ from credit_default.logger import logging
 from datetime import datetime
 
 FILE_NAME = "credit_default.csv"
-TRAIN_FILE_NAME = "train.csv"
-TEST_FILE_NAME = "test.csv"
 TRANSFORMER_OBJECT_FILE_NAME = "transformer.pkl"
-TARGET_ENCODER_OBJECT_FILE_NAME = "target_encoder.pkl"
 MODEL_FILE_NAME = "model.pkl"
 
 
@@ -73,4 +70,3 @@ class ModelPusherConfig:
         self.pusher_model_dir = os.path.join(self.model_pusher_dir,"saved_models")
         self.pusher_model_path = os.path.join(self.pusher_model_dir,MODEL_FILE_NAME)
         self.pusher_transformer_path = os.path.join(self.pusher_model_dir,TRANSFORMER_OBJECT_FILE_NAME)
-        

@@ -5,7 +5,7 @@ from typing import Optional
 import os, sys 
 import numpy as np
 from sklearn.model_selection import GridSearchCV
-from xgboost import XGBClassifier
+
 from credit_default import utils
 from sklearn.metrics import f1_score
 from sklearn.tree import DecisionTreeClassifier
