@@ -4,7 +4,9 @@ from credit_default.logger import logging
 from credit_default.exception import CustomException
 from credit_default.utils import load_object
 from credit_default.predictor import ModelResolver
-
+from datetime import datetime
+from credit_default.components.data_transformation import DataTransformation
+import os
 
 app = Flask(__name__)
 
@@ -87,4 +89,10 @@ def predict_api():
             return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    port = os.environ.get('PORT', '8080')
+    if not port:
+        port = 8080
+    else:
+        port = int(port)
+    logging.info(f"Flask application running on port {port}")
+    app.run(host="0.0.0.0", port=port, debug=True)

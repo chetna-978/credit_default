@@ -6,7 +6,8 @@ from datetime import datetime
 FILE_NAME = "credit_default.csv"
 TRANSFORMER_OBJECT_FILE_NAME = "transformer.pkl"
 MODEL_FILE_NAME = "model.pkl"
-
+TRAIN_FILE_NAME = "train.csv"
+TEST_FILE_NAME = "test.csv"
 
 class TrainingPipelineConfig:
 
