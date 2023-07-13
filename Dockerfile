@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt
 RUN apk update && apk add --no-cache groff less && pip install awscli
 
 # Copy the project files into the container
-COPY . /app/
+COPY . /app
 
 # Expose the port on which the Flask application will run (if applicable)
 EXPOSE 8080
