@@ -8,8 +8,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Install AWS CLI using apk package manager
-RUN apk update && apk add --no-cache groff less && pip install awscli
+# Install AWS CLI using apt package manager
+RUN apt-get update && apt-get install -y groff less
+RUN pip install awscli
 
 # Copy the project files into the container
 COPY . /app
