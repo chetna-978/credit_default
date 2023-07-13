@@ -1,5 +1,5 @@
 # Use a base image with the desired operating system and dependencies
-FROM python:3.8-alpine
+FROM python:3.8-slim-buster
 
 # Set the working directory inside the container
 WORKDIR /app
