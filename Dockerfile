@@ -1,5 +1,5 @@
 # Use a base image with the desired operating system and dependencies
-FROM python:3.8-alpine
+FROM python:3.8-slim-buster
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -9,10 +9,11 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Install AWS CLI using apk package manager
-RUN apk update && apk add --no-cache groff less && pip install awscli
+RUN apt-get update && apt-get install -y groff less
+RUN pip install awscli
 
 # Copy the project files into the container
-COPY . /app/
+COPY . /app
 
 # Expose the port on which the Flask application will run (if applicable)
 EXPOSE 8080
