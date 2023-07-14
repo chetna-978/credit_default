@@ -7,3 +7,5 @@ data_dump.py
 main.py
 README.md
 train.py
+artifact
+saved_models

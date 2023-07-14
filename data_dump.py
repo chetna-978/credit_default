@@ -1,8 +1,7 @@
 import pymongo
 import pandas as pd
 import  json
-client = pymongo.MongoClient("mongodb://localhost:27017/neurolabDB")
-
+client = pymongo.MongoClient("mongodb+srv://chetna:chetna12@cluster0.ibbotup.mongodb.net/?retryWrites=true&w=majority")
 
 DATA_FILE_PATH = "/config/workspace/UCI_Credit_Card.csv"
 DATABASE_NAME = "credit_card_default_prediction"

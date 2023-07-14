@@ -95,4 +95,4 @@ if __name__ == '__main__':
     else:
         port = int(port)
     logging.info(f"Flask application running on port {port}")
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=False)
