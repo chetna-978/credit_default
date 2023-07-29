@@ -3,64 +3,27 @@
 <head>
     <title>Credit Default Prediction</title>
     <style>
-        .login {
-            width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-group select,
-        .form-group input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .form-group input[type="submit"] {
-            width: auto;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-
-        .result {
-            margin-top: 20px;
-            font-weight: bold;
-        }
+        /* Add your CSS styling here (if any) */
     </style>
 </head>
 <body>
     <div class="login">
         <h1>Credit Default Prediction</h1>
-        <form action="{{ url_for('predict_datapoint') }}" method="post">
+        <form action="{{ url_for('predict') }}" method="post">
             <div class="form-group">
-                <label>Limit Balance</label>
-                <input type="number" name="limit_bal" placeholder="Enter Limit Balance" required>
+                <label>LIMIT_BAL</label>
+                <input type="number" name="LIMIT_BAL" placeholder="Enter LIMIT_BAL" required>
             </div>
             <div class="form-group">
-                <label>Sex</label>
-                <select name="sex" required>
+                <label>SEX</label>
+                <select name="SEX" required>
                     <option value="1">Male</option>
                     <option value="2">Female</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Education</label>
-                <select name="education" required>
+                <label>EDUCATION</label>
+                <select name="EDUCATION" required>
                     <option value="1">Graduate School</option>
                     <option value="2">University</option>
                     <option value="3">High School</option>
@@ -68,88 +31,88 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Marriage</label>
-                <select name="marriage" required>
+                <label>MARRIAGE</label>
+                <select name="MARRIAGE" required>
                     <option value="1">Married</option>
                     <option value="2">Single</option>
                     <option value="3">Others</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Age</label>
-                <input type="number" name="age" placeholder="Enter Age" required>
+                <label>AGE</label>
+                <input type="number" name="AGE" placeholder="Enter Age" required>
             </div>
             <div class="form-group">
                 <label>PAY_0</label>
-                <input type="number" name="pay_0" placeholder="Enter PAY_0" required>
+                <input type="number" name="PAY_0" placeholder="Enter PAY_0" required>
             </div>
             <div class="form-group">
                 <label>PAY_2</label>
-                <input type="number" name="pay_2" placeholder="Enter PAY_2" required>
+                <input type="number" name="PAY_2" placeholder="Enter PAY_2" required>
             </div>
             <div class="form-group">
                 <label>PAY_3</label>
-                <input type="number" name="pay_3" placeholder="Enter PAY_3" required>
+                <input type="number" name="PAY_3" placeholder="Enter PAY_3" required>
             </div>
             <div class="form-group">
                 <label>PAY_4</label>
-                <input type="number" name="pay_4" placeholder="Enter PAY_4" required>
+                <input type="number" name="PAY_4" placeholder="Enter PAY_4" required>
             </div>
             <div class="form-group">
                 <label>PAY_5</label>
-                <input type="number" name="pay_5" placeholder="Enter PAY_5" required>
+                <input type="number" name="PAY_5" placeholder="Enter PAY_5" required>
             </div>
             <div class="form-group">
                 <label>PAY_6</label>
-                <input type="number" name="pay_6" placeholder="Enter PAY_6" required>
+                <input type="number" name="PAY_6" placeholder="Enter PAY_6" required>
             </div>
             <div class="form-group">
                 <label>BILL_AMT1</label>
-                <input type="number" name="bill_amt1" placeholder="Enter BILL_AMT1" required>
+                <input type="number" name="BILL_AMT1" placeholder="Enter BILL_AMT1" required>
             </div>
             <div class="form-group">
                 <label>BILL_AMT2</label>
-                <input type="number" name="bill_amt2" placeholder="Enter BILL_AMT2" required>
+                <input type="number" name="BILL_AMT2" placeholder="Enter BILL_AMT2" required>
             </div>
             <div class="form-group">
                 <label>BILL_AMT3</label>
-                <input type="number" name="bill_amt3" placeholder="Enter BILL_AMT3" required>
+                <input type="number" name="BILL_AMT3" placeholder="Enter BILL_AMT3" required>
             </div>
             <div class="form-group">
                 <label>BILL_AMT4</label>
-                <input type="number" name="bill_amt4" placeholder="Enter BILL_AMT4" required>
+                <input type="number" name="BILL_AMT4" placeholder="Enter BILL_AMT4" required>
             </div>
             <div class="form-group">
                 <label>BILL_AMT5</label>
-                <input type="number" name="bill_amt5" placeholder="Enter BILL_AMT5" required>
+                <input type="number" name="BILL_AMT5" placeholder="Enter BILL_AMT5" required>
             </div>
             <div class="form-group">
                 <label>BILL_AMT6</label>
-                <input type="number" name="bill_amt6" placeholder="Enter BILL_AMT6" required>
+                <input type="number" name="BILL_AMT6" placeholder="Enter BILL_AMT6" required>
             </div>
             <div class="form-group">
                 <label>PAY_AMT1</label>
-                <input type="number" name="pay_amt1" placeholder="Enter PAY_AMT1" required>
+                <input type="number" name="PAY_AMT1" placeholder="Enter PAY_AMT1" required>
             </div>
             <div class="form-group">
                 <label>PAY_AMT2</label>
-                <input type="number" name="pay_amt2" placeholder="Enter PAY_AMT2" required>
+                <input type="number" name="PAY_AMT2" placeholder="Enter PAY_AMT2" required>
             </div>
             <div class="form-group">
                 <label>PAY_AMT3</label>
-                <input type="number" name="pay_amt3" placeholder="Enter PAY_AMT3" required>
+                <input type="number" name="PAY_AMT3" placeholder="Enter PAY_AMT3" required>
             </div>
             <div class="form-group">
                 <label>PAY_AMT4</label>
-                <input type="number" name="pay_amt4" placeholder="Enter PAY_AMT4" required>
+                <input type="number" name="PAY_AMT4" placeholder="Enter PAY_AMT4" required>
             </div>
             <div class="form-group">
                 <label>PAY_AMT5</label>
-                <input type="number" name="pay_amt5" placeholder="Enter PAY_AMT5" required>
+                <input type="number" name="PAY_AMT5" placeholder="Enter PAY_AMT5" required>
             </div>
             <div class="form-group">
                 <label>PAY_AMT6</label>
-                <input type="number" name="pay_amt6" placeholder="Enter PAY_AMT6" required>
+                <input type="number" name="PAY_AMT6" placeholder="Enter PAY_AMT6" required>
             </div>
             <div class="form-group">
                 <input type="submit" value="Predict Default Payment" required>

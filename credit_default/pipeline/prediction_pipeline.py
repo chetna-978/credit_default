@@ -71,3 +71,16 @@ class BatchPredictionPipeline:
             return prediction_file_path
         except Exception as e:
             raise CustomException(e, sys)
+
+    def predict(self, user_input):
+        try:
+            # Convert the user input dictionary to a DataFrame
+            data = pd.DataFrame([user_input])
+            transformed_data = self.data_modified(data)
+            self.robust_scaler.fit(transformed_data)
+            transformed_data = self.apply_transformations(data)
+            model = load_object(file_path=self.model_resolver.get_latest_model_path())
+            prediction = model.predict(transformed_data)
+            return prediction
+        except Exception as e:
+            raise CustomException(e, sys)

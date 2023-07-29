@@ -3,6 +3,7 @@ __pycache__
 *py[cod]
 *$py.class
 artifact
+logs
 # C extensions
 *.so
 prediction
