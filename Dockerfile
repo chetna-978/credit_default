@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Install AWS CLI using apk package manager
+# Install AWS CLI using apt package manager
 RUN apt-get update && apt-get install -y groff less
 RUN pip install awscli
 
