@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y groff less
 RUN pip install awscli
 
 # Copy the project files into the container
-COPY . /app
+# COPY . /app
 
 # Expose the port on which the Flask application will run (if applicable)
 EXPOSE 8080
