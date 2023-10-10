@@ -1,9 +1,9 @@
 import pymongo
 import pandas as pd
 import  json
-client = pymongo.MongoClient("mongodb+srv://chetna:chetna12@cluster0.ibbotup.mongodb.net/?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb://localhost:27017")
 
-DATA_FILE_PATH = "/config/workspace/UCI_Credit_Card.csv"
+DATA_FILE_PATH = "C:\\Users\\abhis\\Downloads\\credit_default\\UCI_Credit_Card.csv"
 DATABASE_NAME = "credit_card_default_prediction"
 COLLECTION_NAME = "credit_default"
 

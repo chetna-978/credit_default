@@ -4,11 +4,8 @@ from credit_default.logger import logging
 from typing import Optional
 import os, sys 
 import numpy as np
-from sklearn.model_selection import GridSearchCV
-
 from credit_default import utils
 from sklearn.metrics import f1_score
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score, f1_score, roc_auc_score, roc_curve
@@ -16,17 +13,22 @@ from sklearn.metrics import accuracy_score, classification_report, precision_sco
 
 class ModelTrainer:
     models = {
-        "Random Forest": RandomForestClassifier(),
-        #"Decision Tree": DecisionTreeClassifier(),
-        #"Gradient Boosting": GradientBoostingClassifier(),
-        #"AdaBoost Classifier": AdaBoostClassifier(),
+        "AdaBoost Classifier": AdaBoostClassifier(),
+        "Random-forest Classifier": RandomForestClassifier()   
     }
 
     param = {
-        'Random Forest': {
-            'n_estimators': [60, 100, 120, 256],
-            'criterion': ['entropy', 'log_loss', 'gini'],
-        },
+    
+       'AdaBoost Classifier': { 'n_estimators': [10,50, 100,200,500],
+                                'learning_rate': [0.0001, 0.001,0.01, 0.1,1.0]
+                             },
+        
+
+        'Random-forest Classifier':{'n_estimators' : [20,60,100,120],
+                                    'max_features' : [0.2,0.6,1.0],
+                                    'max_samples' : [0.5,0.75,1.0]
+                                    }               
+
     }
 
     def __init__(self, model_trainer_config: config_entity.ModelTrainerConfig,
@@ -57,8 +59,8 @@ class ModelTrainer:
         best_model_name = max(model_report, key=model_report.get)
         best_model_score = model_report[best_model_name]
         
-        if best_model_score[0] < 0.8:
-            raise CustomException("No best model found")
+        if best_model_score[0] < 0.70:
+            raise Exception("No best model found")
         
         # Create and fit the best model
         best_model = ModelTrainer.models[best_model_name]

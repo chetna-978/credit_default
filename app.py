@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response, make_response
+from flask_cors import CORS
 import pandas as pd
 from credit_default.logger import logging
 from credit_default.exception import CustomException
@@ -8,85 +9,91 @@ from datetime import datetime
 from credit_default.components.data_transformation import DataTransformation
 import os
 
+from credit_default.pipeline.prediction_pipeline import BatchPredictionPipeline
+
 app = Flask(__name__)
-
-PREDICTION_DIR = "prediction"
-
-def apply_transformations(df, data_transformation, robust_scaler):
-    transformed_df = data_transformation.data_modified(df)
-    transformed_df = robust_scaler.transform(transformed_df)
-    return transformed_df
-
-def start_batch_prediction(input_file_path):
-    try:
-        os.makedirs(PREDICTION_DIR, exist_ok=True)
-        logging.info("Creating model resolver object")
-        model_resolver = ModelResolver(model_registry="saved_models")
-        logging.info(f"Reading file: {input_file_path}")
-        df = pd.read_csv(input_file_path)
-
-        logging.info("Loading data transformation object")
-        transformation_path = model_resolver.get_latest_transformer_path()
-        data_transformation = DataTransformation.load_object(file_path=transformation_path)
-
-        logging.info("Loading robust scaler object")
-        robust_scaler = load_object(file_path=data_transformation.data_transformation_config.transform_object_path)
-
-        logging.info("Applying transformations")
-        transformed_df = apply_transformations(df, data_transformation, robust_scaler)
-
-        logging.info("Loading model to make prediction")
-        model = load_object(file_path=model_resolver.get_latest_model_path())
-
-        prediction = model.predict(transformed_df)
-
-        df["prediction"] = prediction
-
-        prediction_file_name = os.path.basename(input_file_path).replace(".csv", f"{datetime.now().strftime('%m%d%Y__%H%M%S')}.csv")
-        prediction_file_path = os.path.join(PREDICTION_DIR, prediction_file_name)
-        df.to_csv(prediction_file_path, index=False, header=True)
-
-        return prediction_file_path
-    except Exception as e:
-        raise CustomException(e, sys)
+CORS(app) 
+app.static_folder = 'static'
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['POST','GET'])
 def predict():
     if request.method == 'GET':
         return render_template('index.html')
+    
     elif request.method == 'POST':
         try:
-            file = request.files['file']
-            file_path = f"uploads/{file.filename}"
-            file.save(file_path)
+            # Extract form data
+            id = int(request.form['ID'])
+            limit_bal = float(request.form['LIMIT_BAL'])
+            sex = int(request.form['SEX'])
+            education = int(request.form['EDUCATION'])
+            marriage = int(request.form['MARRIAGE'])
+            age = int(request.form['AGE'])
+            pay_0 = int(request.form['PAY_0'])
+            pay_2 = int(request.form['PAY_2'])
+            pay_3 = int(request.form['PAY_3'])
+            pay_4 = int(request.form['PAY_4'])
+            pay_5 = int(request.form['PAY_5'])
+            pay_6 = int(request.form['PAY_6'])
+            bill_amt1 = float(request.form['BILL_AMT1'])
+            bill_amt2 = float(request.form['BILL_AMT2'])
+            bill_amt3 = float(request.form['BILL_AMT3'])
+            bill_amt4 = float(request.form['BILL_AMT4'])
+            bill_amt5 = float(request.form['BILL_AMT5'])
+            bill_amt6 = float(request.form['BILL_AMT6'])
+            pay_amt1 = float(request.form['PAY_AMT1'])
+            pay_amt2 = float(request.form['PAY_AMT2'])
+            pay_amt3 = float(request.form['PAY_AMT3'])
+            pay_amt4 = float(request.form['PAY_AMT4'])
+            pay_amt5 = float(request.form['PAY_AMT5'])
+            pay_amt6 = float(request.form['PAY_AMT6'])
 
-            data = pd.read_csv(file_path)
+            # Prepare the input data for prediction (create a DataFrame)
+            input_data = pd.DataFrame({
+                'ID': [id],
+                'LIMIT_BAL': [limit_bal],
+                'SEX': [sex],
+                'EDUCATION': [education],
+                'MARRIAGE': [marriage],
+                'AGE': [age],
+                'PAY_0': [pay_0],
+                'PAY_2': [pay_2],
+                'PAY_3': [pay_3],
+                'PAY_4': [pay_4],
+                'PAY_5': [pay_5],
+                'PAY_6': [pay_6],
+                'BILL_AMT1': [bill_amt1],
+                'BILL_AMT2': [bill_amt2],
+                'BILL_AMT3': [bill_amt3],
+                'BILL_AMT4': [bill_amt4],
+                'BILL_AMT5': [bill_amt5],
+                'BILL_AMT6': [bill_amt6],
+                'PAY_AMT1': [pay_amt1],
+                'PAY_AMT2': [pay_amt2],
+                'PAY_AMT3': [pay_amt3],
+                'PAY_AMT4': [pay_amt4],
+                'PAY_AMT5': [pay_amt5],
+                'PAY_AMT6': [pay_amt6]
+            })
+       
+            pipeline = BatchPredictionPipeline()
+            prediction = pipeline.predict(input_data)
+            results = "default" if prediction == 1 else "not default"
 
-            prediction = start_batch_prediction(data)
 
-            return render_template('index.html', prediction=round(prediction, 2))
+            if 'application/json' in request.accept_mimetypes:
+                return jsonify({'prediction': results})  # Return results in JSON
+            else:
+                return render_template('result.html', results=results)
+
         except Exception as e:
-            return jsonify({'error': str(e)})
+            return render_template('error.html', error=str(e))
 
-@app.route('/predictAPI', methods=['POST'])
-def predict_api():
-    if request.method == 'POST':
-        try:
-            file = request.files['file']
-            file_path = f"uploads/{file.filename}"
-            file.save(file_path)
-
-            data = pd.read_csv(file_path)
-
-            prediction = start_batch_prediction(data)
-
-            return jsonify({'prediction': round(prediction, 2)})
-        except Exception as e:
-            return jsonify({'error': str(e)})
+    return jsonify({'error': 'Invalid request'}), 400
 
 if __name__ == '__main__':
     port = os.environ.get('PORT', '8080')
@@ -94,6 +101,4 @@ if __name__ == '__main__':
         port = 8080
     else:
         port = int(port)
-    logging.info(f"Flask application running on port {port}")
     app.run(host="0.0.0.0", port=port, debug=False)
-    

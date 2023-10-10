@@ -4,8 +4,10 @@ from credit_default.exception  import  CustomException
 from credit_default.config import mongo_client
 import os,sys
 import yaml
+from scipy import stats
+from sklearn.ensemble import IsolationForest
 import numpy as np
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 import dill
 from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
@@ -92,6 +94,10 @@ def load_numpy_array_data(file_path: str,allow_pickle=True) -> np.array:
             return np.load(file_obj)
     except Exception as e:
         raise CustomException(e, sys) from e
+    
+def percentile_capping(df, cols, from_low_end, from_high_end):
+    for col in cols:
+      stats.mstats.winsorize(a=df[col], limits=(from_low_end, from_high_end), inplace=True)
 
 def evaluate_clf(true, predicted):
     '''
@@ -118,13 +124,16 @@ def evaluate_models(X_train, X_test, y_train, y_test, models, param):
 
     for model_name, model in models.items():
         param_grid = param.get(model_name, {})
-        grid_search = GridSearchCV(estimator=model,
-                                   param_grid=param_grid,
-                                   cv=3
-                                   )
-        grid_search.fit(X_train, y_train)
+        
+        # Replace GridSearchCV with RandomizedSearchCV
+        randomized_search = RandomizedSearchCV(estimator=model,
+                                               param_distributions=param_grid,
+                                               n_iter=9,  # Specify the number of iterations
+                                               cv=3
+                                               )
+        randomized_search.fit(X_train, y_train)
 
-        best_model = grid_search.best_estimator_
+        best_model = randomized_search.best_estimator_
         best_model.fit(X_train, y_train)
 
         # Make predictions
@@ -133,14 +142,39 @@ def evaluate_models(X_train, X_test, y_train, y_test, models, param):
 
         # Test set performance
         test_model_score = evaluate_clf(y_test, y_test_pred)
-        report[model_name] = test_model_score
+        report[model_name] =  test_model_score
 
-    return report 
-
-
+    return report
 
 
+def anomaly_detection(self,df):
+     try: 
+    # Create an instance of the Isolation Forest algorithm
+      isolation_forest = IsolationForest()
 
+    # Fit the model on the training data
+      isolation_forest.fit(df)
 
+    # Predict anomalies (-1) and normal instances (1) on the testing data
+      predictions = isolation_forest.predict(df)
+  
+      predictions = isolation_forest.predict(df)  # Use your test data
+    
+      # Add the predictions to your DataFrame
+      df_test = df.copy()
+      # Convert input_feature_test_arr to a DataFrame
+      #df_test = pd.DataFrame(input_feature_test_df, columns=input_feature_train_df.columns.tolist())
 
+      df_test['isolation_forest_prediction'] = predictions
 
+    # Now you can analyze the predictions, for example, by counting anomalies and normals
+      anomaly_count = (df_test['isolation_forest_prediction'] == -1).sum()
+      normal_count = (df_test['isolation_forest_prediction'] == 1).sum()
+
+    # Remove rows predicted as anomalies (-1)
+      df_cleaned_test = df_test[df_test['isolation_forest_prediction'] == 1].copy()
+
+    # Drop the 'isolation_forest_prediction' column as it's no longer needed
+      df_cleaned_test.drop(columns=['isolation_forest_prediction'], inplace=True)
+     except Exception as e:
+            raise CustomException(e, sys)

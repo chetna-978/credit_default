@@ -38,7 +38,7 @@ class DataValidation:
             missing_columns = []
             for base_column in base_columns:
                 if base_column not in current_columns:
-                    logging.info(f"Column: [{base} is not available.]")
+                    logging.info(f"Column: [{base_columns} are not available.]")
                     missing_columns.append(base_column)
 
             if len(missing_columns)>0:
@@ -47,6 +47,32 @@ class DataValidation:
             return True
         except Exception as e:
             raise CustomException(e, sys)
+        
+    def check_category_consistency(self, train_df: pd.DataFrame, test_df: pd.DataFrame, report_key_name: str):
+     try:
+        category_consistency_report = {}
+    
+        # Define the columns where you want to check category consistency
+        columns_to_check = ['PAY_0', 'PAY_2','PAY_3', 'PAY_4', 'PAY_5', 'PAY_6']
+        for column in columns_to_check:
+          train_categories = set(train_df[column].unique())
+          test_categories = set(test_df[column].unique())
+        
+        if train_categories == test_categories:
+            category_consistency_report[column] = {
+                "consistent": True
+            }
+        else:
+            category_consistency_report[column] = {
+                "consistent": False,
+                "train_categories": list(train_categories),
+                "test_categories": list(test_categories)
+            }
+    
+        self.validation_error[report_key_name] = category_consistency_report
+     except Exception as e:
+            raise CustomException(e, sys)
+
 
     def data_drift(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str):
         try:
@@ -90,7 +116,9 @@ class DataValidation:
             logging.info(f"Reading test dataframe")
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
 
-            
+            logging.info(f"Checking for categories consistency in train and test data")
+            self.check_category_consistency(train_df=train_df, test_df=test_df, report_key_name="category_consistency_check")
+
             logging.info(f"Is all required columns present in train df")
             train_df_columns_status = self.is_required_columns_exists(base_df=base_df, current_df=train_df,report_key_name="missing_columns_within_train_dataset")
             logging.info(f"Is all required columns present in test df")

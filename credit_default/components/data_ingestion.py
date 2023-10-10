@@ -35,7 +35,21 @@ class DataIngestion:
             #Save df to feature store folder
             df.to_csv(path_or_buf=self.data_ingestion_config.feature_store_file_path,index=False,header=True)
 
+            # Drop id column
+            df.drop(['ID'],axis=1,inplace=True)
 
+            # Drop duplicate rows
+            df = df.drop_duplicates()
+            # Drop index 2197 because it was outlier in limitbal column
+            df.drop(index=[2197],axis=0,inplace=True)
+            pay_amt_columns=df[['PAY_AMT1','PAY_AMT2', 'PAY_AMT3', 'PAY_AMT4', 'PAY_AMT5', 'PAY_AMT6']]
+            bill_amt_columns=df[[ 'BILL_AMT1', 'BILL_AMT2','BILL_AMT3', 'BILL_AMT4', 'BILL_AMT5', 'BILL_AMT6']]
+            # percentile capping
+            utils.percentile_capping(df,bill_amt_columns, 0.01, 0.01)
+            utils.percentile_capping(df,pay_amt_columns, 0.01, 0.01)
+            #anomaly detection in df
+            utils.anomaly_detection(self,df=df)
+            
             logging.info("split dataset into train and test set")
             #split dataset into train and test set
             train_df,test_df = train_test_split(df,test_size=self.data_ingestion_config.test_size,random_state=42)

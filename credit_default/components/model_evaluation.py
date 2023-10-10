@@ -28,69 +28,54 @@ class ModelEvaluation:
             raise CustomException(e, sys)
 
     def initiate_model_evaluation(self, test_arr: np.ndarray) -> artifact_entity.ModelEvaluationArtifact:
-        try:
-            logging.info("Checking if the saved model folder has a model and comparing the trained models")
-            latest_dir_path = self.model_resolver.get_latest_dir_path()
-            if latest_dir_path is None:
-                model_eval_artifact = artifact_entity.ModelEvaluationArtifact(
-                    is_model_accepted=True,
-                    improved_accuracy=None
-                )
-                logging.info(f"Model evaluation artifact: {model_eval_artifact}")
-                return model_eval_artifact
-
-            logging.info("Finding the locations of the transformer model and model")
-            transformer_path = self.model_resolver.get_latest_transformer_path()
-            model_path = self.model_resolver.get_latest_model_path()
-
-            logging.info("Loading the previously trained transformer and model")
-            transformer = load_object(file_path=transformer_path)
-            model = load_object(file_path=model_path)
-
-            logging.info("Loading the currently trained transformer and model")
-            current_transformer = load_object(file_path=self.data_transformation_artifact.transform_object_path)
-            current_model = load_object(file_path=self.model_trainer_artifact.model_path)
-
-            logging.info("Transforming the test data using the current transformer")
-        
-               # Transforming the test data using the current transformer
-            transformed_test_arr = current_transformer.named_steps['RobustScaler'].transform(test_arr[:, :-1])
-
-               # Ensure the number of features in the test data matches the expected number
-            if transformed_test_arr.shape[1] != current_transformer.named_steps['RobustScaler'].n_features_in_:
-             raise ValueError("Number of features in the test data is not compatible with the transformer")
-
-            # Add the target column back to the transformed test data
-            transformed_test_arr_with_target = np.hstack((transformed_test_arr, test_arr[:, -1].reshape(-1, 1)))
-
-            logging.info("Calculating accuracy using the current trained model")
-            y_pred = current_model.predict(transformed_test_arr_with_target[:, :-1])  # Predict using the current model
-            print(f"Prediction using the trained model: {y_pred[:5]}")
-            current_model_score = f1_score(y_true=test_arr[:, -1], y_pred=y_pred)
-            logging.info(f"Accuracy using the current trained model: {current_model_score}")
-
-            if latest_dir_path:
-                logging.info("Calculating accuracy using the previous trained model")
-                print(f"Number of features in test data: {test_arr.shape[1]}")
-                print(f"Number of features in transformed test data: {transformed_test_arr.shape[1]}")
-                
-                input_arr = transformer.transform(test_arr[:, :-1])  # Exclude the target column during transformation
-                y_pred = model.predict(input_arr)
-                print(f"Prediction using previous model: {y_pred[:5]}")
-                previous_model_score = f1_score(y_true=test_arr[:, -1], y_pred=y_pred)
-                logging.info(f"Accuracy using previous trained model: {previous_model_score}")
-
-                if float(current_model_score) <= float(previous_model_score):
-                    logging.info("The current trained model is not better than the previous model")
-                    raise Exception("The current trained model is not better than the previous model")
-
+     try:
+        logging.info("Checking if the saved model folder has a model and comparing the trained models")
+        latest_dir_path = self.model_resolver.get_latest_dir_path()
+        if latest_dir_path is None:
             model_eval_artifact = artifact_entity.ModelEvaluationArtifact(
                 is_model_accepted=True,
-                improved_accuracy=current_model_score - previous_model_score
+                improved_accuracy=None
             )
             logging.info(f"Model evaluation artifact: {model_eval_artifact}")
             return model_eval_artifact
 
-        except Exception as e:
-            raise CustomException(e, sys)
+        logging.info("Finding the locations of the transformer model and model")
+        transformer_path = self.model_resolver.get_latest_transformer_path()
+        model_path = self.model_resolver.get_latest_model_path()
+
+        logging.info("Loading the previously trained transformer and model")
+        transformer = load_object(file_path=transformer_path)
+        model = load_object(file_path=model_path)
+
+        logging.info("Loading the currently trained transformer and model")
+        current_transformer = load_object(file_path=self.data_transformation_artifact.transform_object_path)
+        current_model = load_object(file_path=self.model_trainer_artifact.model_path)
+
+        logging.info("Calculating F1 score using the current trained model")
+        y_pred_current = current_model.predict(test_arr[:, :-1])  # Exclude the target column
+        print(f"Prediction using the trained model: {y_pred_current[:5]}")
+        current_model_score = f1_score(y_true=test_arr[:, -1], y_pred=y_pred_current)
+        logging.info(f"F1 score using the current trained model: {current_model_score}")
+
+        if latest_dir_path:
+            logging.info("Calculating F1 score using the previous trained model")
+            y_pred_previous = model.predict(test_arr[:, :-1])  # Exclude the target column
+            print(f"Prediction using previous model: {y_pred_previous[:5]}")
+            previous_model_score = f1_score(y_true=test_arr[:, -1], y_pred=y_pred_previous)
+            logging.info(f"F1 score using previous trained model: {previous_model_score}")
+
+            if current_model_score < previous_model_score:
+                logging.info("The current trained model is not better than the previous model")
+                raise Exception("The current trained model is not better than the previous model")
+
+        model_eval_artifact = artifact_entity.ModelEvaluationArtifact(
+            is_model_accepted=True,
+            improved_accuracy=current_model_score - previous_model_score
+        )
+        logging.info(f"Model evaluation artifact: {model_eval_artifact}")
+        return model_eval_artifact
+
+     except Exception as e:
+        raise CustomException(e, sys)
+
 

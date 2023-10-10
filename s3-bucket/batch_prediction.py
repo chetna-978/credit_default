@@ -4,6 +4,7 @@ import pendulum
 import os
 import datetime
 import sys
+from credit_default.pipeline.prediction_pipeline import BatchPredictionPipeline
 from credit_default.components.data_transformation import DataTransformation
 
 
@@ -20,7 +21,8 @@ def batch_prediction(**kwargs):
     input_dir = "/app/input_files"
     for file_name in os.listdir(input_dir):
         # make prediction
-        start_batch_prediction(input_file=os.path.join(input_dir, file_name))
+        pipeline = BatchPredictionPipeline()
+        pipeline.start_batch_prediction(input_file=os.path.join(input_dir, file_name))
 
 
 def sync_prediction_dir_to_s3_bucket(**kwargs):

@@ -2,14 +2,16 @@
 <html>
 <head>
     <title>Credit Default Prediction</title>
-    <style>
-        /* Add your CSS styling here (if any) */
-    </style>
+    <link rel="icon" type="image/png" sizes="32x32" href=" url_for('static', filename='images/favicon-32x32.png') ">
 </head>
-<body>
+<body> 
     <div class="login">
         <h1>Credit Default Prediction</h1>
-        <form action="{{ url_for('predict') }}" method="post">
+        <form action="/predict" method="post">
+            <div class="form-group">
+                <label>ID</label>
+                <input type="number" name="ID" placeholder="Enter ID" required>
+            </div>
             <div class="form-group">
                 <label>LIMIT_BAL</label>
                 <input type="number" name="LIMIT_BAL" placeholder="Enter LIMIT_BAL" required>
@@ -17,25 +19,25 @@
             <div class="form-group">
                 <label>SEX</label>
                 <select name="SEX" required>
-                    <option value="1">Male</option>
-                    <option value="2">Female</option>
+                <option value="1">Male</option>
+                <option value="2">Female</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>EDUCATION</label>
                 <select name="EDUCATION" required>
-                    <option value="1">Graduate School</option>
-                    <option value="2">University</option>
-                    <option value="3">High School</option>
-                    <option value="4">Others</option>
+                <option value="1">Graduate School</option>
+                <option value="2">University</option>
+                <option value="3">High School</option>
+                <option value="4">Others</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>MARRIAGE</label>
                 <select name="MARRIAGE" required>
-                    <option value="1">Married</option>
-                    <option value="2">Single</option>
-                    <option value="3">Others</option>
+                <option value="1">Married</option>
+                <option value="2">Single</option>
+                <option value="3">Others</option>
                 </select>
             </div>
             <div class="form-group">
@@ -43,28 +45,70 @@
                 <input type="number" name="AGE" placeholder="Enter Age" required>
             </div>
             <div class="form-group">
-                <label>PAY_0</label>
-                <input type="number" name="PAY_0" placeholder="Enter PAY_0" required>
+                <label>Payment_installment_1</label>
+                <select name="PAY_0" required>
+                <option value="0"> Duly paid</option>
+                <option value="1"> One Month Delay</option>
+                <option value="2"> Two Month Delay</option>
+                <option value="3"> Three Month Delay</option>
+                <option value="4"> Four or More Month Delay</option>
+                <option value="-1"> No Dues</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>PAY_2</label>
-                <input type="number" name="PAY_2" placeholder="Enter PAY_2" required>
+                <label>Payment_installment_2</label>
+                <select  name="PAY_2"  required>
+                <option value="0"> Duly paid</option>
+                <option value="1"> One Month Delay</option>
+                <option value="2"> Two Month Delay</option>
+                <option value="3"> Three Month Delay</option>
+                <option value="4"> Four or More Month Delay</option>
+                <option value="-1"> No Dues</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>PAY_3</label>
-                <input type="number" name="PAY_3" placeholder="Enter PAY_3" required>
+                <label>Payment_installment_3</label>
+                <select  name="PAY_3" required>
+                <option value="0"> Duly paid</option>
+                <option value="1"> One Month Delay</option>
+                <option value="2"> Two Month Delay</option>
+                <option value="3"> Three Month Delay</option>
+                <option value="4"> Four or More Month Delay</option>
+                <option value="-1"> No Dues</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>PAY_4</label>
-                <input type="number" name="PAY_4" placeholder="Enter PAY_4" required>
+                <label>Payment_installment_4</label>
+                <select name="PAY_4" required>
+                <option value="0"> Duly paid</option>
+                <option value="1"> One Month Delay</option>
+                <option value="2"> Two Month Delay</option>
+                <option value="3"> Three Month Delay</option>
+                <option value="4"> Four or More Month Delay</option>
+                <option value="-1"> No Dues</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>PAY_5</label>
-                <input type="number" name="PAY_5" placeholder="Enter PAY_5" required>
+                <label>Payment_installment_5</label>
+                <select name="PAY_5" required>
+                <option value="0"> Duly paid</option>
+                <option value="1"> One Month Delay</option>
+                <option value="2"> Two Month Delay</option>
+                <option value="3"> Three Month Delay</option>
+                <option value="4"> Four or More Month Delay</option>
+                <option value="-1"> No Dues</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>PAY_6</label>
-                <input type="number" name="PAY_6" placeholder="Enter PAY_6" required>
+                <label>Payment_installment_6</label>
+                <select name="PAY_6" required>
+                <option value="0"> Duly paid</option>
+                <option value="1"> One Month Delay</option>
+                <option value="2"> Two Month Delay</option>
+                <option value="3"> Three Month Delay</option>
+                <option value="4"> Four or More Month Delay</option>
+                <option value="-1"> No Dues</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>BILL_AMT1</label>
@@ -118,11 +162,6 @@
                 <input type="submit" value="Predict Default Payment" required>
             </div>
         </form>
-        {% if results %}
-            <div class="result">
-                <h2>Prediction Result: {{ results }}</h2>
-            </div>
-        {% endif %}
     </div>
 </body>
 </html>

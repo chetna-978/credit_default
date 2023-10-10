@@ -14,9 +14,12 @@ websockets==10.3
 wincertstore==0.2
 pandas
 PyYAML
+matplotlib
+seaborn
 numpy
 flask
-flask_cors
+flask-cors
 scikit-learn==1.2.2
 pendulum
-#-e .
+requests
+-e .
