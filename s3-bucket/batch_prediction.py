@@ -9,8 +9,8 @@ from credit_default.components.data_transformation import DataTransformation
 
 
 def download_files(**kwargs):
-    bucket_name = os.getenv("BUCKET_NAME")
-    input_dir = "/app/input_files"
+    bucket_name  =  os.getenv("BUCKET_NAME")
+    input_dir  =  "/app/input_files"
     # creating directory
     os.makedirs(input_dir, exist_ok=True)
     os.system(f"aws s3 sync s3://{bucket_name}/input_files /app/input_files")
