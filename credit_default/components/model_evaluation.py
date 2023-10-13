@@ -2,7 +2,7 @@ from credit_default.entity import artifact_entity, config_entity
 from credit_default.exception import CustomException
 from credit_default.logger import logging
 from credit_default.utils import load_object, load_numpy_array_data
-from credit_default.predictor import ModelResolver
+from credit_default.predictor import  ModelResolver
 import sys
 import pandas as pd
 import numpy as np
