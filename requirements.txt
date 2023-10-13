@@ -22,4 +22,5 @@ flask-cors
 scikit-learn==1.2.2
 pendulum
 requests
--e 
+#-e.
+
