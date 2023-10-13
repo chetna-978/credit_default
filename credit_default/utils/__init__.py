@@ -22,8 +22,8 @@ def get_collection_as_dataframe(database_name:str,collection_name:str)->pd.DataF
     Description: This function return collection as dataframe
     =========================================================
     Params:
-    database_name: database name
-    collection_name: collection name
+    database_name:  database name
+    collection_name:  collection name
     =========================================================
     return Pandas dataframe of a collection
     """
@@ -175,6 +175,6 @@ def anomaly_detection(self,df):
       df_cleaned_test = df_test[df_test['isolation_forest_prediction'] == 1].copy()
 
     # Drop the 'isolation_forest_prediction' column as it's no longer needed
-      df_cleaned_test.drop(columns=['isolation_forest_prediction'], inplace=True)
+      df_cleaned_test.drop(columns = ['isolation_forest_prediction'], inplace=True)
      except Exception as e:
             raise CustomException(e, sys)
